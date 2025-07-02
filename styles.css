@@ -98,6 +98,95 @@ p {
 }
 
 /* Logo Styling */
+.logo {
+    display: flex;
+    align-items: center;
+    z-index: 1001;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.logo-link:hover {
+    transform: scale(1.03);
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.logo-coffee {
+    font-family: var(--font-primary);
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--dark-brown);
+    letter-spacing: -0.5px;
+}
+
+.logo-for-life {
+    font-family: var(--font-secondary);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--primary-brown);
+    margin-top: -2px;
+}
+
+/* Navbar scrolled state */
+.navbar.scrolled .logo-coffee {
+    color: var(--dark-brown);
+}
+
+.navbar.scrolled .logo-for-life {
+    color: var(--primary-brown);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .logo-img {
+        height: 42px;
+    }
+    
+    .logo-coffee {
+        font-size: 1.3rem;
+    }
+    
+    .logo-for-life {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .logo {
+        margin-right: auto;
+    }
+    
+    .logo-img {
+        height: 38px;
+    }
+    
+    .logo-coffee {
+        font-size: 1.2rem;
+    }
+    
+    .logo-for-life {
+        font-size: 0.8rem;
+    }
+}
+
 .logo h2 {
     font-size: 32px;
     color: #ffffff;

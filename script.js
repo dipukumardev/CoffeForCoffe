@@ -30,13 +30,15 @@ const throttle = (func, limit) => {
 };
 
 // Navigation Functionality
-// Navbar scroll effect
+// Navbar scroll effect with passive event listener
 const handleNavbarScroll = () => {
-    if (window.scrollY > 50) {
-        navbar?.classList.add('scrolled');
-    } else {
-        navbar?.classList.remove('scrolled');
-    }
+    navbar?.classList.toggle('scrolled', window.scrollY > 50);
+};
+
+// Use passive event listener for better scrolling performance
+const handleScroll = () => {
+    handleNavbarScroll();
+    // Other scroll-related functions can be called here if needed
 };
 
 // Mobile menu toggle
@@ -78,7 +80,8 @@ const handleDropdownClick = (e) => {
 };
 
 // Event Listeners for Navigation
-window.addEventListener('scroll', throttle(handleNavbarScroll, 100));
+// Use passive: true for better scrolling performance
+window.addEventListener('scroll', throttle(handleScroll, 100), { passive: true });
 hamburger?.addEventListener('click', toggleMobileMenu);
 
 // Handle dropdown clicks on mobile
@@ -97,18 +100,25 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Reveal on Scroll Animation
-const revealOnScroll = () => {
+// Reveal on Scroll using Intersection Observer
+const initRevealOnScroll = () => {
     const revealElements = document.querySelectorAll('.reveal');
     
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target); // Stop observing once revealed
+            }
+        });
+    }, {
+        threshold: 0.1, // Trigger when 10% of the element is visible
+        rootMargin: '0px 0px -50px 0px' // Adjust when the callback is triggered
+    });
+
+    // Start observing each reveal element
     revealElements.forEach(element => {
-        const elementTop = element.getBoundingClientRect().top;
-        const elementBottom = element.getBoundingClientRect().bottom;
-        const elementVisible = 100;
-        
-        if (elementTop < window.innerHeight - elementVisible && elementBottom > 0) {
-            element.classList.add('active');
-        }
+        revealObserver.observe(element);
     });
 };
 
@@ -381,10 +391,9 @@ const addDynamicStyles = () => {
 
 // Initialize Everything
 const init = () => {
-    // Add dynamic styles
-    addDynamicStyles();
-    
-    // Initialize all features
+    // Initialize all components
+    initRevealOnScroll(); // Use optimized reveal on scroll
+    animateCounters();
     initMachineCards();
     initButtonEffects();
     initTestimonialSlider();
@@ -393,25 +402,23 @@ const init = () => {
     initParallax();
     initContactForm();
     initSmoothScroll();
-    animateCounters();
+    addDynamicStyles();
     
-    // Initial scroll check
+    // Initial check
     handleNavbarScroll();
-    revealOnScroll();
 };
 
 // Event Listeners
-window.addEventListener('scroll', debounce(revealOnScroll, 100));
-window.addEventListener('load', init);
+// Use passive: true for better scrolling performance
+window.addEventListener('load', init, { passive: true });
 window.addEventListener('resize', debounce(() => {
-    // Handle resize events
+    // Recalculate anything that depends on viewport size
     if (window.innerWidth > 768) {
         navWrapper?.classList.remove('active');
         hamburger?.classList.remove('active');
         document.body.classList.remove('menu-open');
-        navItems.forEach(item => item.classList.remove('active'));
     }
-}, 250));
+}, 250), { passive: true });
 
 // Export functions for use in other scripts if needed
 window.CoffeeMachine = {
